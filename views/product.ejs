@@ -1,0 +1,28 @@
+<%- include('_layouts/header.ejs') %>
+
+<div class="row">
+    <h1 class="page-header"><%=p.title%></h1>
+
+    <div class="col-xa-12 col-md-5">
+        <img src="/<%=p.image%>" class="spi" alt="">
+
+
+    </div>
+
+    <div class="col-xs-12 col-md-7">
+
+        <p><%=p.desc%></p>
+        <p><%=p.price%></p>
+        <% if(loggedIn) {%> 
+
+            <p><a href="/cart/add/<%=p.slug%>">Add To Cart</a></p>
+            <% }else{ %>
+                
+                <h1>You must loggedin to buy items</h1>
+            <% } %> 
+
+    </div>
+
+</div>
+
+<%- include('_layouts/footer.ejs')%> 

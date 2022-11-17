@@ -13,7 +13,12 @@
     </head>
 
     <body>
-        
+         <div class="ajaxbg">
+            <div class="ajaxinner">
+                <h3>You Are now being Redirected to paypal...</h3>
+                <img src="/images/ajax-loader.gif" alt="">
+            </div>
+         </div>   
         <nav class="navbar navbar-inverse">
             <div class="container">
                 <div class="navbar-header">
@@ -27,13 +32,40 @@
                 </div>
                 <div id="navbar" class="collapse navbar-collapse">
                     <ul class="nav navbar-nav">
-                      
+                      <%pages.forEach(page=>{  %>
+                        <%if(page.slug =="home"){  %>
+                            <li><a href="/"><%=page.title  %> </a></li>
+
+                            
+                            <%} else{ %> 
+
+
+                          
+                            <li><a href="<%=page.slug%> "><%=page.title  %> </a></li>
+                            <%}%> 
+                        <% }) %> 
                     </ul>
                     <ul class="nav navbar-nav navbar-right">
                         <li>
-                            <a href="/cart/checkout">My Cart </a>
+                            <a href="/cart/checkout">My Cart (
+                                <% if(typeof cart !=="undefined") { %> 
+                                        <%=cart.length  %> 
+                                        <%}else{  %> 
+                                            0
+                                    <% } %> 
+
+                            )</a>
                         </li>
-                      
+                        <% if (user) { %>
+                            <li><a href="/users/logout">Hi, <%= user.username %> ( logout )</a></li>
+                            <% } else {%>
+                            <li><a href="/users/register">Register</a></li>
+                            <li><a href="/users/login">Log in</a></li>
+                            <% } %>
+                            <% if (user && user.admin == 1) { %>
+                            <li><a href="/admin/pages">Admin Area</a></li>
+                            <% }%>
+                            
                         
                     </ul>
                 </div><!--/.nav-collapse -->
@@ -43,18 +75,30 @@
         <div class="container">
             <%- messages('Messages', locals) %>
 
+    <% if(errors) {  %> 
+     <div class="alert alert-danger">
+      <%=errorMessage %>
+     </div>  
+
+    <%  }  %> 
+      
+
             
            
-           <!--  <div class="row">
+             <div class="row">
               <div class="col-xs-12 col-md-3">
                     <h3>Categories</h3>
                     <ul class="list-group">
                         <li class="list-group-item"><a href="/products">All products</a></li>
-                       
+                       <% categories.forEach(cat=>{ %>
+                            
+                            <li class="list-group-item"><a href="/products/<%=cat.slug%>"><%=cat.title  %> </a></li> 
+                        
+                        <% }) %> 
                     </ul>
                 </div>
                 <div class="col-xs-12 col-md-1"></div>
-                <div class="col-xs-12 col-md-8">  -->
+                <div class="col-xs-12 col-md-8">  
                     
                 
 

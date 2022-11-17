@@ -61,8 +61,12 @@ exports.postAddPages = (req, res, next) => {
           });
 
           return page.save().then((pageRes) => {
-            req.flash("success", "Page Added");
-            res.redirect("/admin/pages");
+          return  Page.find({}).sort({sorting:1}).exec().then(pages=>{
+              req.app.locals.pages = pages;
+              req.flash("success", "Page Added");
+             res.redirect("/admin/pages");
+            })
+            
           });
         }
       })
@@ -84,14 +88,19 @@ exports.reorderPages = async (req, res, next) => {
       const page = await Page.findById(id);
       page.sorting = count;
       await page.save();
+      const pages = await Page.find({}).sort({sorting:1}).exec();
+      req.app.locals.pages = pages;
     } catch (error) {
       console.log(error);
     }
   }
+  
+
+
 };
 exports.getEditPage = (req, res, next) => {
-  const editSlug = req.params.id;
-  Page.findOne({ slug: editSlug })
+  const id = req.params.id;
+  Page.findById(id)
     .then((result) => {
       if (!result) {
         return res.render("admin/add_page", {
@@ -117,7 +126,7 @@ exports.postEditPage = (req, res, next) => {
   const updatedTitle = req.body.title;
   const updatedContent = req.body.content;
   const updatedSlug = req.body.slug;
-  const id = req.body.id;
+  const id = req.params.id;
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.render("admin/edit_page", {
@@ -143,15 +152,42 @@ exports.postEditPage = (req, res, next) => {
           _id: id,
         });
       }
+
       Page.findByIdAndUpdate(id, {
         title: updatedTitle,
         content: updatedContent,
         slug: updatedSlug,
       }).then((result) => {
-        console.log("Done updateing from postEditUpdated");
-        req.flash("success", "page added");
-        res.redirect("/admin/pages");
+       return Page.find({}).sort({sorting:1}).exec().then(pages=>{
+          req.app.locals.pages = pages;
+          
+          console.log("Done updateing from postEditUpdated");
+          req.flash("success", "page added");
+          res.redirect("/admin/pages/edit-page/"+id);
+        })
+       
       });
+    })
+    .catch((err) => {
+      console.log(err);
+      const error = new Error(err);
+      error.httpStatusCode = 500;
+      return next(error);
+    });
+};
+exports.deletePage = (req, res, next) => {
+  const id = req.params.id;
+  Page.findByIdAndRemove(id)
+    .then((deletePage) => {
+      if(deletePage){
+        return Page.find({}).sort({sorting:1}).exec().then(pages=>{
+          req.app.locals.pages = pages;
+
+          req.flash("success","page deleted");
+          return res.redirect('/admin/pages');
+        })
+      }
+
     })
     .catch((err) => {
       console.log(err);

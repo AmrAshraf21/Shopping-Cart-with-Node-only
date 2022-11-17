@@ -4,3 +4,16 @@
 .ui-state-highlight{
     border: 1px solid #ccc;
 }
+#imgPreview{
+
+    margin: 20px;
+}
+#noimage{
+    border-radius:20px ;
+    width: 100px;
+    height: 100px;
+}
+table.alignmiddle  td{
+    vertical-align: middle !important;
+    
+    }

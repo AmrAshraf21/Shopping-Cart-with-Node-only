@@ -8,10 +8,13 @@ const {
   reorderPages,
   getEditPage,
   postEditPage,
+  deletePage
 } = require("../controllers/adminCont");
-router.get("/", getPages);
+const auth = require('../config/auth');
 
-router.get("/add-page", getAddPages);
+router.get("/",auth.isAdmin ,getPages);
+
+router.get("/add-page", auth.isAdmin,getAddPages);
 
 router.post(
   "/add-page",
@@ -21,11 +24,11 @@ router.post(
       .notEmpty()
       .isLength({ min: 10 })
       .isString(),
-  ],
+  ],auth.isAdmin,
   postAddPages
 );
 
-router.post("/reorder-pages", reorderPages);
+router.post("/reorder-pages",auth.isAdmin, reorderPages);
 
 router.post("/edit-page/:id",
 [
@@ -34,9 +37,11 @@ router.post("/edit-page/:id",
     .notEmpty()
     .isLength({ min: 10 })
     .isString(),
-]
+],auth.isAdmin
 ,postEditPage);
-router.get("/edit-page/:id",getEditPage);
+router.get("/edit-page/:id",auth.isAdmin,getEditPage);
+
+router.get('/delete-page/:id',auth.isAdmin,deletePage)
 
 
 module.exports = router;
